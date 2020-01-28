@@ -1,18 +1,46 @@
 import { useState } from 'react'
-import dotenv from 'dotenv'
 import { GraphQLClient } from 'graphql-request'
 import UserInput from '../components/UserInput'
-
-dotenv.config()
+import RepoData from '../components/RepoData'
+import getConfig from 'next/config'
 
 export default () => {
   const [userName, setUserName] = useState('')
-  const [invalidUser] = useState(false)
-  const [repoData] = useState({})
+  console.log(getConfig(), 'getconf')
+
+  const [repoData, setRepoData] = useState<{
+    search?: {
+      nodes?: [
+        { repositories: { nodes: [{ name: string; createdAt: string }] } }
+      ]
+    }
+  }>({})
+
+  if (!repoData.search)
+    return (
+      <div>
+        <UserInput
+          requestUserRepoData={requestUserRepoData}
+          setUserName={setUserName}
+          userName={userName}
+          setRepoData={setRepoData}
+        />
+      </div>
+    )
+  const {
+    search: { nodes }
+  } = repoData
   return (
     <div>
-      <UserInput requestUser={requestUser} setUserName={setUserName} />
-      {invalidUser && (
+      <UserInput
+        requestUserRepoData={requestUserRepoData}
+        setUserName={setUserName}
+        userName={userName}
+        setRepoData={setRepoData}
+      />
+      {nodes.length ? (
+        <RepoData repositories={nodes[0].repositories} />
+      ) : (
         <p className="user-error">
           This user does not exist or yout have typed it incorrectly
         </p>
@@ -20,11 +48,16 @@ export default () => {
     </div>
   )
 }
-async function requestUser(variables: { userName: string; endCursor: string }) {
+async function requestUserRepoData(variables: {
+  userName: string
+  endCursor: string
+}) {
+  const { publicRuntimeConfig } = getConfig()
+
   const queryFactory = new GraphQLClient('https://api.github.com/graphql', {
-    headers: { Authorization: `bearer ${process.env.GITHUB_APY_KEY}` }
+    headers: { Authorization: `Bearer ${publicRuntimeConfig.API_KEY}` }
   })
-  const query = `query SearchUser($endCursor: String, $userName){
+  const query = `query SearchUser($endCursor: String = null, $userName: String!){
             search(query: $userName, type: USER, first:1) {
     
                 nodes {
