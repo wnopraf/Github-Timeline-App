@@ -1,16 +1,17 @@
 export default ({
   repositories
 }: {
-  repositories: [{ name: string; createAt: string }]
+  repositories: { nodes: [{ name: string; createdAt: string }] }
 }) => {
   return (
     <ul>
-      {repositories.map((e, i) => {
+      {repositories.nodes.map((e, i) => {
+        const formattedDate = new Date(e.createdAt).toLocaleDateString()
         return (
-          <li key={e.createAt}>
+          <li key={formattedDate}>
             <h3>{e.name}</h3>
             <p>
-              <span>{e.createAt}</span>
+              <span>{formattedDate}</span>
             </p>
           </li>
         )
