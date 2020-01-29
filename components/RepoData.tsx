@@ -8,7 +8,7 @@ export default ({
       {repositories.nodes.map((e, i) => {
         const formattedDate = new Date(e.createdAt).toLocaleDateString()
         return (
-          <li key={formattedDate}>
+          <li key={i}>
             <h3>{e.name}</h3>
             <p>
               <span>{formattedDate}</span>
