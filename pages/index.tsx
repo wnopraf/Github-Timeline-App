@@ -80,6 +80,7 @@ async function requestUserRepoData(variables: {
                       totalCount
                     }
                     name
+                    avatarUrl(size: 10)
                   }
                 }
               }
