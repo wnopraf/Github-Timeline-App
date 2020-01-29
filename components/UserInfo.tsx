@@ -1,0 +1,10 @@
+export default ({ name, avatarUrl }: { name: string; avatarUrl: string }) => {
+  return (
+    <div>
+      <figure>
+        <img src={avatarUrl} alt="user avatar" />
+        <h1>{name}</h1>
+      </figure>
+    </div>
+  )
+}

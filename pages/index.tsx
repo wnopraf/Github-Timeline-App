@@ -3,6 +3,7 @@ import { GraphQLClient } from 'graphql-request'
 import UserInput from '../components/UserInput'
 import RepoData from '../components/RepoData'
 import getConfig from 'next/config'
+import UserInfo from '../components/UserInfo'
 
 export default () => {
   const [userName, setUserName] = useState('')
@@ -11,7 +12,10 @@ export default () => {
   const [repoData, setRepoData] = useState<{
     search?: {
       nodes?: [
-        { repositories: { nodes: [{ name: string; createdAt: string }] } }
+        {
+          [prop: string]: any
+          repositories: { nodes: [{ name: string; createdAt: string }] }
+        }
       ]
     }
   }>({})
@@ -39,7 +43,10 @@ export default () => {
         setRepoData={setRepoData}
       />
       {nodes.length ? (
-        <RepoData repositories={nodes[0].repositories} />
+        <div>
+          <UserInfo name={nodes[0].name} avatarUrl={nodes[0].avatarUrl} />
+          <RepoData repositories={nodes[0].repositories} />
+        </div>
       ) : (
         <p className="user-error">
           This user does not exist or yout have typed it incorrectly
