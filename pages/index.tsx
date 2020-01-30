@@ -8,8 +8,8 @@ import UserInfo from '../components/UserInfo'
 interface GithubApi {
   search: Nodes<User>
 }
-interface Nodes<q> {
-  nodes: [q]
+interface Nodes<T> {
+  nodes: [T]
 }
 interface User {
   id: string
@@ -35,29 +35,20 @@ interface PageInfo {
 }
 export default () => {
   const actualState = useRef<{
-    repoData: {
-      search?: {
-        nodes?: [
-          {
-            [prop: string]: any
-            repositories: {
-              nodes: [{ name: string; createdAt: string }]
-              pageInfo
-            }
-          }
-        ]
-      }
-    }
+    repoData: GithubApi | { search? }
     userName: string
   }>()
+
   useEffect(() => {
     actualState.current = { repoData, userName }
   })
+
   function scrollHandler() {
     console.log(actualState, 'repodata from scroll event')
     const {
       repoData: { search }
-    } = actualState.current
+    }: { repoData: GithubApi | { search? } } = actualState.current
+
     if (!search) return
     const {
       repoData: {
@@ -71,30 +62,20 @@ export default () => {
       },
       userName
     } = actualState.current
+
     scrollPagination(userName, pageInfo, setRepoData)
   }
   const [userName, setUserName] = useState('')
   console.log(getConfig(), 'getconf')
 
-  const [repoData, setRepoData] = useState<{
-    search?: {
-      nodes?: [
-        {
-          [prop: string]: any
-          repositories: {
-            nodes: [{ name: string; createdAt: string }]
-            pageInfo
-          }
-        }
-      ]
-    }
-  }>({})
+  const [repoData, setRepoData] = useState<GithubApi | { search? }>({})
+
   const repoSearchOnClick = async click => {
     const data = await requestUserRepoData({ userName })
     console.log(data, 'graph data')
-
     setRepoData(data)
   }
+
   useEffect(() => {
     window.addEventListener('scroll', scrollHandler)
     return () => {
