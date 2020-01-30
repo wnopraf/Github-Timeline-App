@@ -1,4 +1,12 @@
-export default ({ name, avatarUrl }: { name: string; avatarUrl: string }) => {
+import { ReactElement } from 'react'
+
+export default ({
+  name,
+  avatarUrl
+}: {
+  name: string
+  avatarUrl: string
+}): ReactElement => {
   return (
     <div>
       <figure>
