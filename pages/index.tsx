@@ -5,6 +5,34 @@ import RepoData from '../components/RepoData'
 import getConfig from 'next/config'
 import UserInfo from '../components/UserInfo'
 
+interface GithubApi {
+  search: Nodes<User>
+}
+interface Nodes<q> {
+  nodes: [q]
+}
+interface User {
+  id: string
+  email: string
+  avatarUrl: string
+  name: string
+  repositories: Repositories
+}
+interface Repository {
+  name: string
+  createdAt: string
+}
+interface Repositories {
+  nodes: Nodes<Repository>
+  pageInfo: PageInfo
+  totalCount: number
+  edges: Array<{ cursor: string }>
+}
+interface PageInfo {
+  endCursor: string
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+}
 export default () => {
   const actualState = useRef<{
     repoData: {
