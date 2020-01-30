@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { GraphQLClient } from 'graphql-request'
 import UserInput from '../components/UserInput'
 import RepoData from '../components/RepoData'
@@ -6,6 +6,45 @@ import getConfig from 'next/config'
 import UserInfo from '../components/UserInfo'
 
 export default () => {
+  const actualState = useRef<{
+    repoData: {
+      search?: {
+        nodes?: [
+          {
+            [prop: string]: any
+            repositories: {
+              nodes: [{ name: string; createdAt: string }]
+              pageInfo
+            }
+          }
+        ]
+      }
+    }
+    userName: string
+  }>()
+  useEffect(() => {
+    actualState.current = { repoData, userName }
+  })
+  function scrollHandler() {
+    console.log(actualState, 'repodata from scroll event')
+    const {
+      repoData: { search }
+    } = actualState.current
+    if (!search) return
+    const {
+      repoData: {
+        search: {
+          nodes: [
+            {
+              repositories: { pageInfo }
+            }
+          ]
+        }
+      },
+      userName
+    } = actualState.current
+    scrollPagination(userName, pageInfo, setRepoData)
+  }
   const [userName, setUserName] = useState('')
   console.log(getConfig(), 'getconf')
 
@@ -14,21 +53,31 @@ export default () => {
       nodes?: [
         {
           [prop: string]: any
-          repositories: { nodes: [{ name: string; createdAt: string }] }
+          repositories: {
+            nodes: [{ name: string; createdAt: string }]
+            pageInfo
+          }
         }
       ]
     }
   }>({})
+  const repoSearchOnClick = async click => {
+    const data = await requestUserRepoData({ userName })
+    console.log(data, 'graph data')
+
+    setRepoData(data)
+  }
+  useEffect(() => {
+    window.addEventListener('scroll', scrollHandler)
+    return () => {
+      window.removeEventListener('scroll', scrollHandler)
+    }
+  }, [])
 
   if (!repoData.search)
     return (
       <div>
-        <UserInput
-          requestUserRepoData={requestUserRepoData}
-          setUserName={setUserName}
-          userName={userName}
-          setRepoData={setRepoData}
-        />
+        <UserInput click={repoSearchOnClick} setUserName={setUserName} />
       </div>
     )
   const {
@@ -36,12 +85,7 @@ export default () => {
   } = repoData
   return (
     <div>
-      <UserInput
-        requestUserRepoData={requestUserRepoData}
-        setUserName={setUserName}
-        userName={userName}
-        setRepoData={setRepoData}
-      />
+      <UserInput click={repoSearchOnClick} setUserName={setUserName} />
       {nodes.length ? (
         <div>
           <UserInfo name={nodes[0].name} avatarUrl={nodes[0].avatarUrl} />
@@ -57,7 +101,7 @@ export default () => {
 }
 async function requestUserRepoData(variables: {
   userName: string
-  endCursor: string
+  endCursor?: string
 }) {
   const { publicRuntimeConfig } = getConfig()
 
@@ -94,4 +138,27 @@ async function requestUserRepoData(variables: {
         }`
 
   return await queryFactory.request(query, variables)
+}
+
+async function scrollPagination(
+  userName,
+  pageInfo: { hasNextPage: boolean; endCursor: string },
+  setRepoData
+) {
+  const { hasNextPage, endCursor } = pageInfo
+  const scrollLimit = document.scrollingElement.scrollHeight
+  console.log('hasNextPage:prev scroll', hasNextPage)
+
+  if (hasNextPage && window.scrollY + window.innerHeight >= scrollLimit) {
+    console.log('hasNextPage:after scroll', hasNextPage)
+    let newState = await requestUserRepoData({ userName, endCursor })
+    console.log(newState, 'new state:scroll')
+    setRepoData(prevState => {
+      newState.search.nodes[0].repositories.nodes = [
+        ...prevState.search.nodes[0].repositories.nodes,
+        ...newState.search.nodes[0].repositories.nodes
+      ]
+      return newState
+    })
+  }
 }
