@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import { GraphQLClient } from 'graphql-request'
 import UserInput from '../components/UserInput'
 import RepoData from '../components/RepoData'
-import getConfig from 'next/config'
+import { requestUserRepoData } from '../lib/utils'
 import UserInfo from '../components/UserInfo'
 import { GithubApi } from '../types'
+import { USER_REPO_QUERY } from '../lib/querys'
 
 export default () => {
   const actualState = useRef<{
@@ -39,12 +40,11 @@ export default () => {
     scrollPagination(userName, pageInfo, setRepoData)
   }
   const [userName, setUserName] = useState('')
-  console.log(getConfig(), 'getconf')
 
   const [repoData, setRepoData] = useState<GithubApi | { search? }>({})
 
   const repoSearchOnClick = async click => {
-    const data = await requestUserRepoData({ userName })
+    const data = await requestUserRepoData({ userName }, USER_REPO_QUERY)
     console.log(data, 'graph data')
     setRepoData(data)
   }
@@ -81,46 +81,6 @@ export default () => {
     </div>
   )
 }
-async function requestUserRepoData(variables: {
-  userName: string
-  endCursor?: string
-}) {
-  const { publicRuntimeConfig } = getConfig()
-
-  const queryFactory = new GraphQLClient('https://api.github.com/graphql', {
-    headers: { Authorization: `Bearer ${publicRuntimeConfig.API_KEY}` }
-  })
-  const query = `query SearchUser($endCursor: String = null, $userName: String!){
-            search(query: $userName, type: USER, first:1) {
-    
-                nodes {
-                  ... on User {
-                    id
-                    email
-                    repositories(first: 10, after:$endCursor, orderBy: {field: CREATED_AT, direction: DESC}) {
-                      nodes {
-                        name
-                        createdAt
-                      }
-                      edges {
-                        cursor
-                      }
-                      pageInfo {
-                        endCursor
-                        hasNextPage
-                        hasPreviousPage
-                      }
-                      totalCount
-                    }
-                    name
-                    avatarUrl(size: 10)
-                  }
-                }
-              }
-        }`
-
-  return await queryFactory.request(query, variables)
-}
 
 async function scrollPagination(
   userName,
@@ -133,7 +93,10 @@ async function scrollPagination(
 
   if (hasNextPage && window.scrollY + window.innerHeight >= scrollLimit) {
     console.log('hasNextPage:after scroll', hasNextPage)
-    let newState = await requestUserRepoData({ userName, endCursor })
+    let newState = await requestUserRepoData(
+      { userName, endCursor },
+      USER_REPO_QUERY
+    )
     console.log(newState, 'new state:scroll')
     setRepoData(prevState => {
       newState.search.nodes[0].repositories.nodes = [
