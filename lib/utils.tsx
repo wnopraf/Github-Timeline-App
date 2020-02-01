@@ -5,6 +5,7 @@ export async function requestUserRepoData(
   variables: {
     userName: string
     endCursor?: string
+    totalRepos?: number
   },
   query: string
 ) {
