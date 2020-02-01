@@ -27,8 +27,8 @@ export const USER_REPO_QUERY = `query SearchUser($endCursor: String = null, $use
       }
 }`
 
-export const TOTAL_REPO_BY_DATE_QUERY = `query SearchUser($totalRepos: Int, $userName: String!){
-    search(query: $userName, type: USER, first:$totalRepos) {
+export const TOTAL_REPO_BY_DATE_QUERY = `query SearchUser($totalRepos: Int!, $userName: String!){
+    search(query: $userName, type: USER, first:1) {
 
         nodes {
           ... on User {
