@@ -10,7 +10,7 @@ import TotalReposByDate from '../components/TotalReposByDate'
 
 export default () => {
   const actualState = useRef<{
-    repoData: GithubApi | { search? }
+    repoData: GithubApi
     userName: string
   }>()
 
@@ -22,7 +22,7 @@ export default () => {
     console.log(actualState, 'repodata from scroll event')
     const {
       repoData: { search }
-    }: { repoData: GithubApi | { search? } } = actualState.current
+    }: { repoData: GithubApi } = actualState.current
 
     if (!search) return
     const {
@@ -42,7 +42,7 @@ export default () => {
   }
   const [userName, setUserName] = useState('')
 
-  const [repoData, setRepoData] = useState<GithubApi | { search? }>({})
+  const [repoData, setRepoData] = useState<GithubApi>({})
 
   const repoSearchOnClick = async click => {
     const data = await requestUserRepoData({ userName }, USER_REPO_QUERY)
@@ -76,6 +76,7 @@ export default () => {
           <TotalReposByDate
             userName={userName}
             totalRepos={repositories.totalCount}
+            repoData={repoData}
           />
           <RepoData repositories={repositories} />
         </div>

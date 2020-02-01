@@ -1,5 +1,5 @@
 export interface GithubApi {
-  search: Nodes<User>
+  search?: Nodes<User>
 }
 interface Nodes<T> {
   nodes: [T]
