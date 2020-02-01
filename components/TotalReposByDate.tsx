@@ -13,8 +13,8 @@ export default ({
   const [repoCountByDate, setRepoCountByDate] = useState<
     { year: number; total: number }[]
   >([])
-  useEffect(
-    (async () => {
+  useEffect(() => {
+    ;(async () => {
       const {
         search: {
           nodes: [{ repositories }]
@@ -26,9 +26,9 @@ export default ({
       console.log('repos per year', repoCountPerYear(repositories))
 
       setRepoCountByDate(repoCountPerYear(repositories))
-    }) as any,
-    []
-  )
+    })()
+  }, [])
+
   return (
     <div className="repo-stats">
       {repoCountByDate.length &&
