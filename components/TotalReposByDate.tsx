@@ -23,7 +23,9 @@ export default ({
         { userName, totalRepos },
         TOTAL_REPO_BY_DATE_QUERY
       )
-      setRepoCountByDate(repoSearch(repositories))
+      console.log('repos per year', repoCountPerYear(repositories))
+
+      setRepoCountByDate(repoCountPerYear(repositories))
     }) as any,
     []
   )
@@ -43,7 +45,7 @@ export default ({
   )
 }
 
-function repoSearch(repositories: Repositories) {
+function repoCountPerYear(repositories: Repositories) {
   const extractYear: (date: string) => number = date =>
     new Date(date).getFullYear()
   let repoDate: number = 0

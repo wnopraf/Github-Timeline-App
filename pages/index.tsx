@@ -6,6 +6,7 @@ import { requestUserRepoData } from '../lib/utils'
 import UserInfo from '../components/UserInfo'
 import { GithubApi } from '../types'
 import { USER_REPO_QUERY } from '../lib/querys'
+import TotalReposByDate from '../components/TotalReposByDate'
 
 export default () => {
   const actualState = useRef<{
@@ -65,13 +66,18 @@ export default () => {
   const {
     search: { nodes }
   } = repoData
+  const [{ repositories }] = nodes
   return (
     <div>
       <UserInput click={repoSearchOnClick} setUserName={setUserName} />
       {nodes.length ? (
         <div>
           <UserInfo name={nodes[0].name} avatarUrl={nodes[0].avatarUrl} />
-          <RepoData repositories={nodes[0].repositories} />
+          <TotalReposByDate
+            userName={userName}
+            totalRepos={repositories.totalCount}
+          />
+          <RepoData repositories={repositories} />
         </div>
       ) : (
         <p className="user-error">
