@@ -11,12 +11,12 @@ interface User {
   name: string
   repositories: Repositories
 }
-interface Repository {
+export interface Repository {
   name: string
   createdAt: string
 }
-interface Repositories {
-  nodes: Nodes<Repository>
+export interface Repositories {
+  nodes: [Repository]
   pageInfo: PageInfo
   totalCount: number
   edges: Array<{ cursor: string }>
