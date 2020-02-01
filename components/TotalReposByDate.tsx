@@ -5,10 +5,12 @@ import { GithubApi, Repository, Repositories } from '../types'
 
 export default ({
   totalRepos,
-  userName
+  userName,
+  repoData
 }: {
   totalRepos: number
   userName: string
+  repoData: GithubApi
 }): ReactElement => {
   const [repoCountByDate, setRepoCountByDate] = useState<
     { year: number; total: number }[]
@@ -27,16 +29,19 @@ export default ({
 
       setRepoCountByDate(repoCountPerYear(repositories))
     })()
-  }, [])
+  }, [repoData])
 
   return (
     <div className="repo-stats">
+      <h3>repo count by year</h3>
       {repoCountByDate.length &&
         repoCountByDate.map(e => {
           return (
-            <div className="repo-stats">
-              <span>{e.year}</span>
-              <span>{e.total}</span>
+            <div className="repo-stats" key={e.year}>
+              <span>{e.year}</span>{' '}
+              <span>
+                {e.total} {e.total > 1 ? 'repos' : 'repo'}
+              </span>
             </div>
           )
         })}
