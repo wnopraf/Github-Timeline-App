@@ -6,11 +6,11 @@ import { GithubApi, Repository, Repositories } from '../types'
 export default ({
   totalRepos,
   userName,
-  repoData
+  isSearch
 }: {
   totalRepos: number
   userName: string
-  repoData: GithubApi
+  isSearch: string
 }): ReactElement => {
   const [repoCountByDate, setRepoCountByDate] = useState<
     { year: number; total: number }[]
@@ -45,7 +45,7 @@ export default ({
           } = repoExcedent
           hasNextPage = theNextPage
         }
-        console.log('paginated repos per year', repoCountPerYear(repositories))
+        console.log('paginated nrepos per year', repoCountPerYear(repositories))
         return setRepoCountByDate(repoCountPerYear(repositories))
       }
       const {
@@ -61,7 +61,7 @@ export default ({
 
       setRepoCountByDate(repoCountPerYear(repositories))
     })()
-  }, [repoData])
+  }, [isSearch])
 
   return (
     <div className="repo-stats">
