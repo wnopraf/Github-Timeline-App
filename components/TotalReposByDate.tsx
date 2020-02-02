@@ -17,6 +17,37 @@ export default ({
   >([])
   useEffect(() => {
     ;(async () => {
+      if (totalRepos > 100) {
+        totalRepos = 100
+        const {
+          search: {
+            nodes: [{ repositories }]
+          }
+        }: GithubApi = await requestUserRepoData(
+          { userName, totalRepos },
+          TOTAL_REPO_BY_DATE_QUERY
+        )
+        let {
+          pageInfo: { hasNextPage, endCursor }
+        } = repositories
+        while (hasNextPage) {
+          const {
+            search: {
+              nodes: [{ repositories: repoExcedent }]
+            }
+          }: GithubApi = await requestUserRepoData(
+            { userName, totalRepos, endCursor },
+            TOTAL_REPO_BY_DATE_QUERY
+          )
+          repositories.nodes.concat(repoExcedent.nodes)
+          let {
+            pageInfo: { hasNextPage: theNextPage }
+          } = repoExcedent
+          hasNextPage = theNextPage
+        }
+        console.log('paginated repos per year', repoCountPerYear(repositories))
+        return setRepoCountByDate(repoCountPerYear(repositories))
+      }
       const {
         search: {
           nodes: [{ repositories }]
@@ -25,6 +56,7 @@ export default ({
         { userName, totalRepos },
         TOTAL_REPO_BY_DATE_QUERY
       )
+
       console.log('repos per year', repoCountPerYear(repositories))
 
       setRepoCountByDate(repoCountPerYear(repositories))

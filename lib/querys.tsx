@@ -27,16 +27,21 @@ export const USER_REPO_QUERY = `query SearchUser($endCursor: String = null, $use
       }
 }`
 
-export const TOTAL_REPO_BY_DATE_QUERY = `query SearchUser($totalRepos: Int!, $userName: String!){
+export const TOTAL_REPO_BY_DATE_QUERY = `query SearchUser($totalRepos: Int!, $userName: String!, $endCursor: String = null){
     search(query: $userName, type: USER, first:1) {
 
         nodes {
           ... on User {
-            repositories(first: $totalRepos, orderBy: {field: CREATED_AT, direction: DESC}) {
+            repositories(first: $totalRepos, orderBy: {field: CREATED_AT, direction: DESC}, after:$endCursor) {
               nodes {
                 name
                 createdAt
-              }          
+              } 
+              pageInfo {
+                endCursor
+                hasNextPage
+                hasPreviousPage
+              }         
               totalCount
             }
             
