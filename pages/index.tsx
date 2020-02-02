@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react'
-import { GraphQLClient } from 'graphql-request'
 import UserInput from '../components/UserInput'
 import RepoData from '../components/RepoData'
 import { requestUserRepoData } from '../lib/utils'
@@ -57,33 +56,30 @@ export default () => {
     }
   }, [])
 
-  if (!repoData.search)
-    return (
-      <div>
-        <UserInput click={repoSearchOnClick} setUserName={setUserName} />
-      </div>
-    )
-  const {
-    search: { nodes }
-  } = repoData
-  const [{ repositories }] = nodes
   return (
     <div>
       <UserInput click={repoSearchOnClick} setUserName={setUserName} />
-      {nodes.length ? (
-        <div>
-          <UserInfo name={nodes[0].name} avatarUrl={nodes[0].avatarUrl} />
-          <TotalReposByDate
-            userName={userName}
-            totalRepos={repositories.totalCount}
-            repoData={repoData}
-          />
-          <RepoData repositories={repositories} />
-        </div>
+      {repoData.search ? (
+        repoData.search.nodes.length ? (
+          <div>
+            <UserInfo
+              name={repoData.search.nodes[0].name}
+              avatarUrl={repoData.search.nodes[0].avatarUrl}
+            />
+            <TotalReposByDate
+              userName={userName}
+              totalRepos={repoData.search.nodes[0].repositories.totalCount}
+              repoData={repoData}
+            />
+            <RepoData repositories={repoData.search.nodes[0].repositories} />
+          </div>
+        ) : (
+          <p className="user-error">
+            This user does not exist or yout have typed it incorrectly
+          </p>
+        )
       ) : (
-        <p className="user-error">
-          This user does not exist or yout have typed it incorrectly
-        </p>
+        ''
       )}
     </div>
   )
