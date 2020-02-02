@@ -2,7 +2,7 @@ export interface GithubApi {
   search?: Nodes<User>
 }
 interface Nodes<T> {
-  nodes: [T]
+  nodes: T[]
 }
 interface User {
   id: string
@@ -16,7 +16,7 @@ export interface Repository {
   createdAt: string
 }
 export interface Repositories {
-  nodes: [Repository]
+  nodes: Repository[]
   pageInfo: PageInfo
   totalCount: number
   edges: Array<{ cursor: string }>
