@@ -1,8 +1,6 @@
-export default ({
-  repositories
-}: {
-  repositories: { nodes: [{ name: string; createdAt: string }] }
-}) => {
+import { Repositories } from '../types'
+
+export default ({ repositories }: { repositories: Repositories }) => {
   return (
     <ul>
       {repositories.nodes.map((e, i) => {
