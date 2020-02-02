@@ -16,10 +16,11 @@ export default ({
     { year: number; total: number }[]
   >([])
   useEffect(() => {
+    console.log(isSearch, 'useEffect-total')
     ;(async () => {
       if (totalRepos > 100) {
         totalRepos = 100
-        const {
+        let {
           search: {
             nodes: [{ repositories }]
           }
@@ -39,10 +40,15 @@ export default ({
             { userName, totalRepos, endCursor },
             TOTAL_REPO_BY_DATE_QUERY
           )
-          repositories.nodes.concat(repoExcedent.nodes)
+          repositories.nodes = repositories.nodes.concat(
+            repoExcedent.nodes
+          ) as Repository[]
+          console.log(repositories, 'from generator')
+
           let {
-            pageInfo: { hasNextPage: theNextPage }
+            pageInfo: { hasNextPage: theNextPage, endCursor: newCursor }
           } = repoExcedent
+          endCursor = newCursor
           hasNextPage = theNextPage
         }
         console.log('paginated nrepos per year', repoCountPerYear(repositories))
