@@ -37,10 +37,10 @@ export default () => {
       userName
     } = actualState.current
 
-    scrollPagination(userName, pageInfo, setRepoData)
+    scrollPagination(userName, pageInfo, setRepoData, setIsRepoSearching)
   }
   const [userName, setUserName] = useState('')
-
+  const [isRepoSearching, setIsRepoSearching] = useState<boolean>(false)
   const [repoData, setRepoData] = useState<GithubApi>({})
   const [isRepoFilterSearch, setIsRepoFilterSearch] = useState<boolean>(false)
 
@@ -75,6 +75,7 @@ export default () => {
               setIsRepoFilterSearch={setIsRepoFilterSearch}
             />
             <RepoData repositories={repoData.search.nodes[0].repositories} />
+            {isRepoSearching && <p>Loading ...</p>}
           </div>
         ) : (
           <p className="user-error">
@@ -91,13 +92,15 @@ export default () => {
 async function scrollPagination(
   userName,
   pageInfo: { hasNextPage: boolean; endCursor: string },
-  setRepoData
+  setRepoData,
+  setIsRepoSearching
 ) {
   const { hasNextPage, endCursor } = pageInfo
   const scrollLimit = document.scrollingElement.scrollHeight
   console.log('hasNextPage:prev scroll', hasNextPage)
 
   if (hasNextPage && window.scrollY + window.innerHeight >= scrollLimit) {
+    setIsRepoSearching(true)
     console.log('hasNextPage:after scroll', hasNextPage)
     let newState = await requestUserRepoData(
       { userName, endCursor },
@@ -111,5 +114,6 @@ async function scrollPagination(
       ]
       return newState
     })
+    setIsRepoSearching(false)
   }
 }
