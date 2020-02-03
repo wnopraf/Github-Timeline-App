@@ -6,55 +6,21 @@ import { GithubApi, Repository, Repositories } from '../types'
 export default ({
   totalRepos,
   userName,
-  isSearch
+  isSearch,
+  setIsSearch
 }: {
   totalRepos: number
   userName: string
-  isSearch: string
+  isSearch: boolean
+  setIsSearch: (arg: boolean) => void
 }): ReactElement => {
   const [repoCountByDate, setRepoCountByDate] = useState<
     { year: number; total: number }[]
   >([])
-  useEffect(() => {
-    console.log(isSearch, 'useEffect-total')
-    ;(async () => {
-      if (totalRepos > 100) {
-        totalRepos = 100
-        let {
-          search: {
-            nodes: [{ repositories }]
-          }
-        }: GithubApi = await requestUserRepoData(
-          { userName, totalRepos },
-          TOTAL_REPO_BY_DATE_QUERY
-        )
-        let {
-          pageInfo: { hasNextPage, endCursor }
-        } = repositories
-        while (hasNextPage) {
-          const {
-            search: {
-              nodes: [{ repositories: repoExcedent }]
-            }
-          }: GithubApi = await requestUserRepoData(
-            { userName, totalRepos, endCursor },
-            TOTAL_REPO_BY_DATE_QUERY
-          )
-          repositories.nodes = repositories.nodes.concat(
-            repoExcedent.nodes
-          ) as Repository[]
-          console.log(repositories, 'from generator')
-
-          let {
-            pageInfo: { hasNextPage: theNextPage, endCursor: newCursor }
-          } = repoExcedent
-          endCursor = newCursor
-          hasNextPage = theNextPage
-        }
-        console.log('paginated nrepos per year', repoCountPerYear(repositories))
-        return setRepoCountByDate(repoCountPerYear(repositories))
-      }
-      const {
+  const filterUserRepoByYear = async () => {
+    if (totalRepos > 100) {
+      totalRepos = 100
+      let {
         search: {
           nodes: [{ repositories }]
         }
@@ -62,17 +28,55 @@ export default ({
         { userName, totalRepos },
         TOTAL_REPO_BY_DATE_QUERY
       )
+      let {
+        pageInfo: { hasNextPage, endCursor }
+      } = repositories
+      while (hasNextPage) {
+        const {
+          search: {
+            nodes: [{ repositories: repoExcedent }]
+          }
+        }: GithubApi = await requestUserRepoData(
+          { userName, totalRepos, endCursor },
+          TOTAL_REPO_BY_DATE_QUERY
+        )
+        repositories.nodes = repositories.nodes.concat(
+          repoExcedent.nodes
+        ) as Repository[]
+        console.log(repositories, 'from generator')
 
-      console.log('repos per year', repoCountPerYear(repositories))
+        let {
+          pageInfo: { hasNextPage: theNextPage, endCursor: newCursor }
+        } = repoExcedent
+        endCursor = newCursor
+        hasNextPage = theNextPage
+      }
+      console.log('paginated nrepos per year', repoCountPerYear(repositories))
+      return setRepoCountByDate(repoCountPerYear(repositories))
+    }
+    const {
+      search: {
+        nodes: [{ repositories }]
+      }
+    }: GithubApi = await requestUserRepoData(
+      { userName, totalRepos },
+      TOTAL_REPO_BY_DATE_QUERY
+    )
 
-      setRepoCountByDate(repoCountPerYear(repositories))
+    console.log('repos per year', repoCountPerYear(repositories))
+
+    setRepoCountByDate(repoCountPerYear(repositories))
+  }
+  if (isSearch) {
+    ;(async () => {
+      await filterUserRepoByYear()
+      setIsSearch(!isSearch)
     })()
-  }, [isSearch])
-
+  }
   return (
     <div className="repo-stats">
       <h3>repo count by year</h3>
-      {repoCountByDate.length &&
+      {!isSearch &&
         repoCountByDate.map(e => {
           return (
             <div className="repo-stats" key={e.year}>
@@ -83,7 +87,7 @@ export default ({
             </div>
           )
         })}
-      {!repoCountByDate.length && 'Loading ...'}
+      {isSearch && 'Loading ...'}
     </div>
   )
 }
