@@ -42,13 +42,13 @@ export default () => {
   const [userName, setUserName] = useState('')
 
   const [repoData, setRepoData] = useState<GithubApi>({})
-  const [isSearch, setIsSearch] = useState<boolean>(false)
+  const [isRepoFilterSearch, setIsRepoFilterSearch] = useState<boolean>(false)
 
   const repoSearchOnClick = async click => {
     const data = await requestUserRepoData({ userName }, USER_REPO_QUERY)
     console.log(data, 'graph data')
     setRepoData(data)
-    setIsSearch(true)
+    setIsRepoFilterSearch(true)
   }
 
   useEffect(() => {
@@ -71,8 +71,8 @@ export default () => {
             <TotalReposByDate
               userName={userName}
               totalRepos={repoData.search.nodes[0].repositories.totalCount}
-              isSearch={isSearch}
-              setIsSearch={setIsSearch}
+              isRepoFilterSearch={isRepoFilterSearch}
+              setIsRepoFilterSearch={setIsRepoFilterSearch}
             />
             <RepoData repositories={repoData.search.nodes[0].repositories} />
           </div>

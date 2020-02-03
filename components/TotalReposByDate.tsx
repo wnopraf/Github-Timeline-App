@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { requestUserRepoData } from '../lib/utils'
 import { TOTAL_REPO_BY_DATE_QUERY } from '../lib/querys'
 import { GithubApi, Repository, Repositories } from '../types'
@@ -6,13 +6,13 @@ import { GithubApi, Repository, Repositories } from '../types'
 export default ({
   totalRepos,
   userName,
-  isSearch,
-  setIsSearch
+  isRepoFilterSearch,
+  setIsRepoFilterSearch
 }: {
   totalRepos: number
   userName: string
-  isSearch: boolean
-  setIsSearch: (arg: boolean) => void
+  isRepoFilterSearch: boolean
+  setIsRepoFilterSearch: (arg: boolean) => void
 }): ReactElement => {
   const [repoCountByDate, setRepoCountByDate] = useState<
     { year: number; total: number }[]
@@ -67,16 +67,16 @@ export default ({
 
     setRepoCountByDate(repoCountPerYear(repositories))
   }
-  if (isSearch) {
+  if (isRepoFilterSearch) {
     ;(async () => {
       await filterUserRepoByYear()
-      setIsSearch(!isSearch)
+      setIsRepoFilterSearch(!isRepoFilterSearch)
     })()
   }
   return (
     <div className="repo-stats">
       <h3>repo count by year</h3>
-      {!isSearch &&
+      {!isRepoFilterSearch &&
         repoCountByDate.map(e => {
           return (
             <div className="repo-stats" key={e.year}>
@@ -87,7 +87,7 @@ export default ({
             </div>
           )
         })}
-      {isSearch && 'Loading ...'}
+      {isRepoFilterSearch && 'Loading ...'}
     </div>
   )
 }
