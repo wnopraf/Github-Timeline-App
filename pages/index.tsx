@@ -1,11 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import UserInput from '../components/UserInput'
-import RepoData from '../components/RepoData'
 import { requestUserRepoData } from '../lib/utils'
-import UserInfo from '../components/UserInfo'
 import { GithubApi } from '../types'
 import { USER_REPO_QUERY } from '../lib/querys'
-import TotalReposByDate from '../components/TotalReposByDate'
+import RepoDataRenderer from '../components/RepoDataRenderer'
 
 export default () => {
   const actualState = useRef<{
@@ -37,15 +35,25 @@ export default () => {
       userName
     } = actualState.current
 
-    scrollPagination(userName, pageInfo, setRepoData, setIsRepoSearching)
+    scrollPagination(
+      userName,
+      pageInfo,
+      setRepoData,
+      setIsRepoPaginateSearching
+    )
   }
   const [userName, setUserName] = useState('')
   const [isRepoSearching, setIsRepoSearching] = useState<boolean>(false)
+  const [isRepoPaginateSearching, setIsRepoPaginateSearching] = useState<
+    boolean
+  >(false)
   const [repoData, setRepoData] = useState<GithubApi>({})
   const [isRepoFilterSearch, setIsRepoFilterSearch] = useState<boolean>(false)
 
   const repoSearchOnClick = async click => {
+    setIsRepoSearching(true)
     const data = await requestUserRepoData({ userName }, USER_REPO_QUERY)
+    setIsRepoSearching(false)
     console.log(data, 'graph data')
     setRepoData(data)
     setIsRepoFilterSearch(true)
@@ -61,30 +69,14 @@ export default () => {
   return (
     <div>
       <UserInput click={repoSearchOnClick} setUserName={setUserName} />
-      {repoData.search ? (
-        repoData.search.nodes.length ? (
-          <div>
-            <UserInfo
-              name={repoData.search.nodes[0].name}
-              avatarUrl={repoData.search.nodes[0].avatarUrl}
-            />
-            <TotalReposByDate
-              userName={userName}
-              totalRepos={repoData.search.nodes[0].repositories.totalCount}
-              isRepoFilterSearch={isRepoFilterSearch}
-              setIsRepoFilterSearch={setIsRepoFilterSearch}
-            />
-            <RepoData repositories={repoData.search.nodes[0].repositories} />
-            {isRepoSearching && <p>Loading ...</p>}
-          </div>
-        ) : (
-          <p className="user-error">
-            This user does not exist or yout have typed it incorrectly
-          </p>
-        )
-      ) : (
-        ''
-      )}
+      <RepoDataRenderer
+        repoData={repoData}
+        userName={userName}
+        isRepoSearching={isRepoSearching}
+        isRepoPaginateSearching={isRepoPaginateSearching}
+        isRepoFilterSearch={isRepoFilterSearch}
+        setIsRepoFilterSearch={setIsRepoFilterSearch}
+      />
     </div>
   )
 }
@@ -93,14 +85,14 @@ async function scrollPagination(
   userName,
   pageInfo: { hasNextPage: boolean; endCursor: string },
   setRepoData,
-  setIsRepoSearching
+  setIsRepoPaginateSearching
 ) {
   const { hasNextPage, endCursor } = pageInfo
   const scrollLimit = document.scrollingElement.scrollHeight
   console.log('hasNextPage:prev scroll', hasNextPage)
 
   if (hasNextPage && window.scrollY + window.innerHeight >= scrollLimit) {
-    setIsRepoSearching(true)
+    setIsRepoPaginateSearching(true)
     console.log('hasNextPage:after scroll', hasNextPage)
     let newState = await requestUserRepoData(
       { userName, endCursor },
@@ -114,6 +106,6 @@ async function scrollPagination(
       ]
       return newState
     })
-    setIsRepoSearching(false)
+    setIsRepoPaginateSearching(false)
   }
 }
