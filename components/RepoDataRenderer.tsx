@@ -1,6 +1,7 @@
 import UserInfo from './UserInfo'
 import TotalReposByDate from './TotalReposByDate'
 import RepoData from './RepoData'
+import { GithubApi } from '../types'
 
 export default ({
   repoData,
@@ -9,6 +10,13 @@ export default ({
   isRepoPaginateSearching,
   isRepoFilterSearch,
   setIsRepoFilterSearch
+}: {
+  repoData: GithubApi
+  userName: string
+  isRepoSearching: boolean
+  isRepoPaginateSearching: boolean
+  isRepoFilterSearch: boolean
+  setIsRepoFilterSearch: (boolean) => void
 }) => {
   if (!repoData.search) {
     return null
