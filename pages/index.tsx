@@ -9,14 +9,16 @@ export default () => {
   const actualState = useRef<{
     repoData: GithubApi
     userName: string
+    isRepoPaginateSearching: boolean
   }>()
 
   useEffect(() => {
-    actualState.current = { repoData, userName }
+    actualState.current = { repoData, userName, isRepoPaginateSearching }
   })
 
   function scrollHandler() {
     console.log(actualState, 'repodata from scroll event')
+    if (actualState.current.isRepoPaginateSearching) return
     const {
       repoData: { search }
     }: { repoData: GithubApi } = actualState.current
