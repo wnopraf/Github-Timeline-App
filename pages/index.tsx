@@ -69,7 +69,7 @@ export default () => {
   }, [])
 
   return (
-    <div>
+    <div className="container px-2 mx-auto">
       <UserInput click={repoSearchOnClick} setUserName={setUserName} />
       <RepoDataRenderer
         repoData={repoData}
