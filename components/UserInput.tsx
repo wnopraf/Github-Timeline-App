@@ -14,6 +14,14 @@ export default ({
         ref={input}
         type="text"
         onChange={e => setUserName(e.target.value)}
+        onKeyUp={e => {
+          switch (e.key) {
+            case 'Enter':
+              ;(e.target as HTMLInputElement).value = ''
+              click()
+              return
+          }
+        }}
       />
       <button
         onClick={e => {
