@@ -15,19 +15,20 @@ export default ({
         ref={input}
         type="text"
         onChange={e => setUserName(e.target.value)}
-        onKeyUp={e => {
+        onKeyUp={async e => {
           switch (e.key) {
             case 'Enter':
-              ;(e.target as HTMLInputElement).value = ''
-              click()
+              await click()
+              console.log(e, 'event')
+              input.current.value = ''
               return
           }
         }}
       />
       <button
-        onClick={e => {
+        onClick={async e => {
+          await click()
           input.current.value = ''
-          click()
         }}
         className="px-2 py-1 ml-2 rounded-lg bg-blue-500 text-white"
       >
