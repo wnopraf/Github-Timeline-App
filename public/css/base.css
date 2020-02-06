@@ -8,3 +8,11 @@ h3 {
 h4 {
   @apply text-2xl;
 }
+
+.repo-item:after {
+  content: '';
+  position: absolute;
+  left: calc(-1rem / 2 - 2px);
+  top: calc(50% - 1rem / 2);
+  @apply w-4 h-4 bg-gray-600 rounded-full;
+}
