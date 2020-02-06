@@ -76,7 +76,7 @@ export default ({
   return (
     <div className="repo-stats">
       <h3 className="text-center capitalize">repo count by year</h3>
-      <div className="stat-wrapper flex justify-center items-center flex-no-wrap">
+      <div className="stat-wrapper flex justify-center items-center flex-wrap">
         {!isRepoFilterSearch &&
           repoCountByDate.map(e => {
             return (
