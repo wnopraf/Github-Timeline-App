@@ -8,11 +8,11 @@ export default ({
   avatarUrl: string
 }): ReactElement => {
   return (
-    <div>
-      <figure>
-        <img src={avatarUrl} alt="user avatar" />
-        <h1>{name}</h1>
+    <div className="py-3 text-center">
+      <figure className=" w-32 inline-block">
+        <img className="max-w-full h-auto" src={avatarUrl} alt="user avatar" />
       </figure>
+      <h1 className="mt-2">{name}</h1>
     </div>
   )
 }
