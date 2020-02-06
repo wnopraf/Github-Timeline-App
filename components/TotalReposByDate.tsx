@@ -75,18 +75,24 @@ export default ({
   }
   return (
     <div className="repo-stats">
-      <h3>repo count by year</h3>
-      {!isRepoFilterSearch &&
-        repoCountByDate.map(e => {
-          return (
-            <div className="repo-stats" key={e.year}>
-              <span>{e.year}</span>{' '}
-              <span>
-                {e.total} {e.total > 1 ? 'repos' : 'repo'}
-              </span>
-            </div>
-          )
-        })}
+      <h3 className="text-center capitalize">repo count by year</h3>
+      <div className="stat-wrapper flex justify-center items-center flex-no-wrap">
+        {!isRepoFilterSearch &&
+          repoCountByDate.map(e => {
+            return (
+              <div
+                className="repo-stats mr-2 mt-2 px-2 py-1 bg-yellow-500"
+                key={e.year}
+              >
+                <span>{e.year}</span>{' '}
+                <span>
+                  {e.total} {e.total > 1 ? 'repos' : 'repo'}
+                </span>
+              </div>
+            )
+          })}
+      </div>
+
       {isRepoFilterSearch && 'Loading ...'}
     </div>
   )
