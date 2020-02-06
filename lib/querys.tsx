@@ -21,7 +21,7 @@ export const USER_REPO_QUERY = `query SearchUser($endCursor: String = null, $use
               totalCount
             }
             name
-            avatarUrl(size: 10)
+            avatarUrl
           }
         }
       }
