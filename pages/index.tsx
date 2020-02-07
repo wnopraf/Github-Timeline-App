@@ -52,7 +52,7 @@ export default () => {
   const [repoData, setRepoData] = useState<GithubApi>({})
   const [isRepoFilterSearch, setIsRepoFilterSearch] = useState<boolean>(false)
 
-  const repoSearchOnClick = async () => {
+  const repoSearchOnClick = async click => {
     setIsRepoSearching(true)
     const data = await requestUserRepoData({ userName }, USER_REPO_QUERY)
     setIsRepoSearching(false)
