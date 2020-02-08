@@ -2,6 +2,7 @@ import { ReactElement, useState } from 'react'
 import { requestUserRepoData } from '../lib/utils'
 import { TOTAL_REPO_BY_DATE_QUERY } from '../lib/querys'
 import { GithubApi, Repository, Repositories } from '../types'
+import Loader from './Loader'
 
 export default ({
   totalRepos,
@@ -93,7 +94,7 @@ export default ({
           })}
       </div>
 
-      {isRepoFilterSearch && 'Loading ...'}
+      {isRepoFilterSearch && <Loader />}
     </div>
   )
 }

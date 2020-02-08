@@ -2,6 +2,7 @@ import UserInfo from './UserInfo'
 import TotalReposByDate from './TotalReposByDate'
 import RepoData from './RepoData'
 import { GithubApi } from '../types'
+import Loader from './Loader'
 
 export default ({
   repoData,
@@ -35,7 +36,7 @@ export default ({
   const { totalCount } = repositories
 
   if (isRepoSearching) {
-    return <p>Loading ...</p>
+    return <Loader />
   }
 
   return (
@@ -48,7 +49,7 @@ export default ({
         setIsRepoFilterSearch={setIsRepoFilterSearch}
       />
       <RepoData repositories={repositories} />
-      {isRepoPaginateSearching && <p>Loading ...</p>}
+      {isRepoPaginateSearching && <Loader />}
     </div>
   )
 }
