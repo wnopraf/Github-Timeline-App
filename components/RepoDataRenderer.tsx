@@ -24,7 +24,7 @@ export default ({
   }
   const { search } = repoData
   const { nodes: users } = search
-  if (!users.length) {
+  if (!users.length || !users[0].id) {
     return (
       <p className="user-error text-2xl text-center">
         This user does not exist or you have typed it incorrectly
