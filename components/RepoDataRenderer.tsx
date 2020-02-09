@@ -26,8 +26,8 @@ export default ({
   const { nodes: users } = search
   if (!users.length) {
     return (
-      <p className="user-error">
-        This user does not exist or yout have typed it incorrectly
+      <p className="user-error text-2xl text-center">
+        This user does not exist or you have typed it incorrectly
       </p>
     )
   }

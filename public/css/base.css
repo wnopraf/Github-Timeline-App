@@ -16,5 +16,8 @@ h4 {
   position: absolute;
   left: calc(-1rem / 2 - 2px);
   top: calc(50% - 1rem / 2);
-  @apply w-4 h-4 bg-gray-600 rounded-full;
+  @apply w-4 h-4 bg-blue-600 rounded-full;
+}
+.input-box button {
+  letter-spacing: 1.5px;
 }

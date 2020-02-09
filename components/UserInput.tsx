@@ -10,7 +10,7 @@ export default ({
   return (
     <div className="input-box flex justify-center py-3 mb-3">
       <input
-        className=" border  border-gray-400 w-1/3 "
+        className=" border  border-gray-400 w-1/3 pl-4 h-12 focus:outline-none focus:shadow "
         type="text"
         onChange={e => setUserName(e.target.value)}
         onKeyUp={async e => {
@@ -27,7 +27,7 @@ export default ({
         onClick={async e => {
           await click()
         }}
-        className="px-2 py-1 ml-2 rounded-lg bg-blue-500 text-white"
+        className="px-2 py-1 ml-3 rounded bg-blue-500 text-white   focus:outline-none"
       >
         Generate
       </button>

@@ -8,7 +8,7 @@ export default ({ repositories }: { repositories: Repositories }) => {
         return (
           <li
             key={i}
-            className="repo-item relative px-3 py-3   border-l-4 border-gray-600"
+            className="repo-item relative px-3 py-3   border-l-4 border-blue-600"
           >
             <div className="pl-4 py-2 bg-blue-600 text-gray-100">
               <h4>{e.name}</h4>

@@ -12,7 +12,7 @@ export default ({
       <figure className=" w-32 inline-block">
         <img className="max-w-full h-auto" src={avatarUrl} alt="user avatar" />
       </figure>
-      <h1 className="mt-2">{name}</h1>
+      <h1>{name}</h1>
     </div>
   )
 }
