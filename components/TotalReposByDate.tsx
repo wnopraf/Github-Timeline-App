@@ -44,7 +44,6 @@ export default ({
         repositories.nodes = repositories.nodes.concat(
           repoExcedent.nodes
         ) as Repository[]
-        console.log(repositories, 'from generator')
 
         let {
           pageInfo: { hasNextPage: theNextPage, endCursor: newCursor }
@@ -52,7 +51,7 @@ export default ({
         endCursor = newCursor
         hasNextPage = theNextPage
       }
-      console.log('paginated nrepos per year', repoCountPerYear(repositories))
+
       return setRepoCountByDate(repoCountPerYear(repositories))
     }
     const {
@@ -63,8 +62,6 @@ export default ({
       { userName, totalRepos },
       TOTAL_REPO_BY_DATE_QUERY
     )
-
-    console.log('repos per year', repoCountPerYear(repositories))
 
     setRepoCountByDate(repoCountPerYear(repositories))
   }

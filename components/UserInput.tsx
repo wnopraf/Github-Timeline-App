@@ -17,7 +17,6 @@ export default ({
           switch (e.key) {
             case 'Enter':
               await click()
-              console.log(e, 'event')
 
               return
           }

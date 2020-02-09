@@ -17,7 +17,6 @@ export default () => {
   })
 
   function scrollHandler() {
-    console.log(actualState, 'repodata from scroll event')
     if (actualState.current.isRepoPaginateSearching) return
     const {
       repoData: { search }
@@ -56,7 +55,7 @@ export default () => {
     setIsRepoSearching(true)
     const data = await requestUserRepoData({ userName }, USER_REPO_QUERY)
     setIsRepoSearching(false)
-    console.log(data, 'graph data')
+
     setRepoData(data)
     setIsRepoFilterSearch(true)
   }
@@ -91,16 +90,15 @@ async function scrollPagination(
 ) {
   const { hasNextPage, endCursor } = pageInfo
   const scrollLimit = document.scrollingElement.scrollHeight
-  console.log('hasNextPage:prev scroll', hasNextPage)
 
   if (hasNextPage && window.scrollY + window.innerHeight >= scrollLimit) {
     setIsRepoPaginateSearching(true)
-    console.log('hasNextPage:after scroll', hasNextPage)
+
     let newState = await requestUserRepoData(
       { userName, endCursor },
       USER_REPO_QUERY
     )
-    console.log(newState, 'new state:scroll')
+
     setRepoData(prevState => {
       newState.search.nodes[0].repositories.nodes = [
         ...prevState.search.nodes[0].repositories.nodes,
